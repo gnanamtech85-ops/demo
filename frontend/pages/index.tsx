@@ -1,31 +1,30 @@
-import Head from 'next/head'
-import Link from 'next/link'
+import { useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { AuthContext } from './_app';
 
 export default function Home() {
-    return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
-            <Head>
-                <title>Live Stream Pro</title>
-                <meta name="description" content="Professional Live Streaming Platform" />
-            </Head>
+  const { user } = useContext(AuthContext);
+  const router = useRouter();
 
-            <main className="text-center">
-                <h1 className="text-6xl font-bold text-primary mb-4">
-                    Live Stream Pro
-                </h1>
-                <p className="text-2xl mb-8">
-                    Professional Streaming for Everyone
-                </p>
+  useEffect(() => {
+    // Redirect based on user role
+    if (user) {
+      if (user.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else if (user.role === 'client') {
+        router.push('/client/dashboard');
+      }
+    } else {
+      router.push('/login');
+    }
+  }, [user, router]);
 
-                <div className="flex gap-4 justify-center">
-                    <Link href="/admin/dashboard" className="px-6 py-3 bg-primary rounded-lg font-bold hover:bg-red-700 transition">
-                        Admin Login
-                    </Link>
-                    <Link href="/client/login" className="px-6 py-3 bg-gray-800 rounded-lg font-bold hover:bg-gray-700 transition">
-                        Client Portal
-                    </Link>
-                </div>
-            </main>
-        </div>
-    )
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
 }
